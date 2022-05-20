@@ -1,15 +1,19 @@
 /* 
 bloque de importaciones de las librerias que ayudaran a
 que se ejecuten sin ningun problema el proyecto
-*/
+ */
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -17,24 +21,25 @@ import javax.swing.table.TableModel;
 //@author PATY
 /*
 metodo de la interfaz
-*/
+ */
 public class ProyectoVenta extends javax.swing.JFrame {
+
     /*
     Facilita el trabajo relacionado con las tablas que en este caso es llamado modelo
-    */
-DefaultTableModel modelo;
+     */
+    DefaultTableModel modelo;
 
     public ProyectoVenta() {
         initComponents();
         /*
         linea de codigo para quitar al usurio la accesibilidad 
         de que pueda maximizar o minimizar la interfaz
-        */
+         */
         this.setLocationRelativeTo(null);
         /*
         bloque de codigo que se encarga de mostralo en txt
-        */
-        modelo =new DefaultTableModel();
+         */
+        modelo = new DefaultTableModel();
         modelo.addColumn("Nombre de la prenda");
         modelo.addColumn("Tipo de prenda");
         modelo.addColumn("Talla");
@@ -42,11 +47,11 @@ DefaultTableModel modelo;
         modelo.addColumn("Precio");
         modelo.addColumn("Existencia");
         modelo.addColumn("Numero del inventario");
-         
+
         /*
         Linea de codigo que hace referencia a la tabla el cual nos sirve para usar su contenido
-        */
-         this.jTable1.setModel(modelo);
+         */
+        this.jTable1.setModel(modelo);
         /*
         Linea de codigo que nos ayuda a centrar la interfaz
          */
@@ -54,20 +59,59 @@ DefaultTableModel modelo;
         /*
         Forma de declarar el modelo de datos como un DefaultTableModel y luego que hace referencia a un JTable , 
         obteniendo los datos de la tabla
-        */
-    modelo = (DefaultTableModel)this.jTable1.getModel();
+         */
+        modelo = (DefaultTableModel) this.jTable1.getModel();
     }
     /*
     Datos que contiene la tabla
-    */
-     String nom_Prenda="";
-     String tipo_prenda="";
-     String talla="";
-     String cant="";
-     String precio="";
-     String existencia="";
-     String num_Inventario="";
-     
+     */
+    String nom_Prenda = "";
+    String tipo_prenda = "";
+    String talla = "";
+    String cant = "";
+    String precio = "";
+    String existencia = "";
+    String num_Inventario = "";
+
+    //Operaciones generales
+    private void setValuesInit() {
+        /*
+        Su función es asignar el ítem u opción que se ha de mostrar o seleccionar por defecto en el Combo Box
+         */
+        Box1.setSelectedIndex(0);
+        Box2.setSelectedIndex(0);
+        Box3.setSelectedIndex(0);
+        /*
+        se utiliza para lo que tu le pongas de argumento aparecerá en el componente de texto
+         */
+        Cantidad.setText("");
+        Precio.setText("");
+        Existencia.setText("");
+        Numero_Inventario.setText("");
+    }
+
+    private boolean escribirCSV(String arr) {
+        try {
+            //Crear objeto FileWriter que sera el que nos ayude a escribir sobre el archivo
+            File arch = new File("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.csv");
+            FileWriter archivo2 = new FileWriter(arch, true);
+            if (arch.length() == 0) {
+                archivo2.write("Nombre de la prenda, Tipo de prenda, Talla, Cantidad, Precio, Existencia, Numero de inventario" + "\n");
+            }
+
+            archivo2.write(arr + "\n");
+            archivo2.close();
+
+            System.out.println("El archivo se guardó correctamente");
+        } catch (FileNotFoundException ex) {
+            System.err.println("Archivo no encontrado: " + ex.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(ProyectoVenta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -92,7 +136,9 @@ DefaultTableModel modelo;
         Existencia = new javax.swing.JTextField();
         Numero_Inventario = new javax.swing.JTextField();
         GuardaEnCSV = new javax.swing.JButton();
-        GuardarEnXML = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        MostrarTXT = new javax.swing.JButton();
+        MostrarCSV = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -188,10 +234,20 @@ DefaultTableModel modelo;
             }
         });
 
-        GuardarEnXML.setText("Guardar en XML");
-        GuardarEnXML.addActionListener(new java.awt.event.ActionListener() {
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ImagenAbilene.jpeg"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
+        MostrarTXT.setText("Mostrar TXT");
+        MostrarTXT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GuardarEnXMLActionPerformed(evt);
+                MostrarTXTActionPerformed(evt);
+            }
+        });
+
+        MostrarCSV.setText("Mostrar CSV");
+        MostrarCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MostrarCSVActionPerformed(evt);
             }
         });
 
@@ -214,47 +270,45 @@ DefaultTableModel modelo;
                         .addComponent(Exis, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Existencia, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(N_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Talla, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(31, 31, 31)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(Box1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Box3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(164, 164, 164))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(15, 15, 15)
-                                .addComponent(GuardarEnTXT)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(GuardaEnCSV)
-                                .addGap(53, 53, 53)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(N_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Talla, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Box1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Box3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addComponent(Ti_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(Box2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(38, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Numero_Inventario))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(Can, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(Cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(Numero_Inventario)))
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(GuardarEnXML)
-                                .addGap(72, 72, 72))))))
+                                        .addGap(76, 76, 76)
+                                        .addComponent(Cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(Ti_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(34, 34, 34)
+                                        .addComponent(Box2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 36, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(GuardarEnTXT)
+                        .addGap(18, 18, 18)
+                        .addComponent(MostrarTXT)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(GuardaEnCSV)
+                        .addGap(27, 27, 27)
+                        .addComponent(MostrarCSV)
+                        .addGap(141, 141, 141))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(Tabla)
@@ -270,20 +324,23 @@ DefaultTableModel modelo;
                 .addGap(6, 6, 6)
                 .addComponent(Salir)
                 .addGap(4, 4, 4)
-                .addComponent(TIENDA_ROPA, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(N_Prenda)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(Box1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(Ti_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(Box2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(56, 56, 56)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Talla)
-                    .addComponent(Box3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Can)
-                    .addComponent(Cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(TIENDA_ROPA, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(N_Prenda)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(Box1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(Ti_Prenda, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(Box2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(56, 56, 56)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Talla)
+                            .addComponent(Box3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Can)
+                            .addComponent(Cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(56, 56, 56)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Pre)
@@ -296,7 +353,8 @@ DefaultTableModel modelo;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(GuardarEnTXT)
                     .addComponent(GuardaEnCSV)
-                    .addComponent(GuardarEnXML))
+                    .addComponent(MostrarTXT)
+                    .addComponent(MostrarCSV))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -305,102 +363,102 @@ DefaultTableModel modelo;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-@SuppressWarnings("empty-statement")
+    @SuppressWarnings("empty-statement")
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
 
         System.exit(0);
-    
+
     }//GEN-LAST:event_SalirActionPerformed
     /*
     Metodo que se encarga de guardar los datos en la tabla
-    */
+     */
     private void GuardarEnTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarEnTXTActionPerformed
-     /*
+        /*
         Bloque de codigo que se encarga de mandar a traer los combo box y los jtextField 
         al metodo de guardar
-        */
-      nom_Prenda= Box1.getSelectedItem().toString();
-      tipo_prenda= Box2.getSelectedItem().toString();
-      talla= Box3.getSelectedItem().toString();
-      cant= Cantidad.getText();
-      precio= Precio.getText();
-      existencia=Existencia.getText();
-      num_Inventario=Numero_Inventario.getText();
-   
-      /*
+         */
+        nom_Prenda = Box1.getSelectedItem().toString();
+        tipo_prenda = Box2.getSelectedItem().toString();
+        talla = Box3.getSelectedItem().toString();
+        cant = Cantidad.getText();
+        precio = Precio.getText();
+        existencia = Existencia.getText();
+        num_Inventario = Numero_Inventario.getText();
+
+        /*
       Declaracion del arreglo el cual contiene 7 ingresos de información
-      */
-     String [] info= new String[7];
-     /*
+         */
+        String[] info = new String[7];
+        /*
      informacion que contiene el arreglo y que son mostrados en la tabla 
-     */
-        info[0]=nom_Prenda;
-        info[1]=tipo_prenda;
-        info[2]=talla;
-        info[3]=cant;
-        info[4]=precio;
-        info[5]=existencia;
-        info[6]=num_Inventario;
+         */
+        info[0] = nom_Prenda;
+        info[1] = tipo_prenda;
+        info[2] = talla;
+        info[3] = cant;
+        info[4] = precio;
+        info[5] = existencia;
+        info[6] = num_Inventario;
         /*
         Forma de obtenet un Objeto del tipo DefaultTableModel , el cual si nos permite agregar filas, 
         tomando a traves del Metodo getModel() de la tabla jTable1
-        */
+         */
         modelo.addRow(info);
         /*
         Su función es asignar el ítem u opción que se ha de mostrar o seleccionar por defecto en el Combo Box
-        */
+         */
         Box1.setSelectedIndex(0);
         Box2.setSelectedIndex(0);
         Box3.setSelectedIndex(0);
         /*
         se utiliza para lo que tu le pongas de argumento aparecerá en el componente de texto
-        */
+         */
         Cantidad.setText("");
         Precio.setText("");
         Existencia.setText("");
         Numero_Inventario.setText("");
-        
-        try{
-          //Crear objeto FileWriter que sera el que nos ayude a escribir sobre el archivo
-          FileWriter archivo=new FileWriter("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.txt",true);
-        /*
+
+        try {
+            //Crear objeto FileWriter que sera el que nos ayude a escribir sobre el archivo
+            FileWriter archivo = new FileWriter("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.txt", true);
+            /*
          ciclos for que nos permiten ejecutar una o varias líneas de código de forma iterativa 
-          */
-         archivo.write("Nombre de la prenda  Tipo de prenda  Talla  Cantidad  Precio  Existencia  Numero de inventario"+"\n" );
-          for (int i=0;i<this.jTable1.getRowCount();i++){
-              //Escribimos en el archivo con el metodo write 
-             
-              archivo.write(modelo.getValueAt(i, 0).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 1).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 2).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 3).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 4).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 5).toString()+"  " );
-              archivo.write(modelo.getValueAt(i, 6).toString()+" \n " );
-              
-          }
-          /*
+             */
+            archivo.write("Nombre de la prenda  Tipo de prenda  Talla  Cantidad  Precio  Existencia  Numero de inventario" + "\n");
+            for (int i = 0; i < this.jTable1.getRowCount(); i++) {
+                //Escribimos en el archivo con el metodo write 
+
+                archivo.write(modelo.getValueAt(i, 0).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 1).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 2).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 3).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 4).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 5).toString() + "  ");
+                archivo.write(modelo.getValueAt(i, 6).toString() + " \n ");
+
+            }
+            /*
           Cerramos la conexion
-          */
-          archivo.close();
-          /*
+             */
+            archivo.close();
+            /*
           imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println("El archivo se aguardo exitosamente");
-          /*
+             */
+            System.out.println("El archivo se aguardo exitosamente");
+            /*
           //Si existe un problema al escribir cae aqui
-          */
-      }catch (IOException x){
-          /*
+             */
+        } catch (IOException x) {
+            /*
           imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println(x); 
-                  System.out.println("Mensaje dentro del catch");
-          /*
+             */
+            System.out.println(x);
+            System.out.println("Mensaje dentro del catch");
+            /*
           Linea de codigo que nos ayuda a finalizar el proceso de ejecucion
-          */
+             */
         }
-        
+
 
     }//GEN-LAST:event_GuardarEnTXTActionPerformed
 
@@ -413,179 +471,85 @@ DefaultTableModel modelo;
     }//GEN-LAST:event_Box1ActionPerformed
 
     private void Numero_InventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Numero_InventarioActionPerformed
-//           int min = 10;
-//           int max = 1000;
-//           Random random = new Random();
-//
-//		int Numero_Inventario = random.nextInt(max + min) + min;
-//		System.out.println(Numero_Inventario);
+
     }//GEN-LAST:event_Numero_InventarioActionPerformed
 
     private void GuardaEnCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardaEnCSVActionPerformed
         // TODO add your handling code here:
-      nom_Prenda= Box1.getSelectedItem().toString();
-      tipo_prenda= Box2.getSelectedItem().toString();
-      talla= Box3.getSelectedItem().toString();
-      cant= Cantidad.getText();
-      precio= Precio.getText();
-      existencia=Existencia.getText();
-      num_Inventario=Numero_Inventario.getText();
-   
-      /*
+        nom_Prenda = Box1.getSelectedItem().toString();
+        tipo_prenda = Box2.getSelectedItem().toString();
+        talla = Box3.getSelectedItem().toString();
+        cant = Cantidad.getText();
+        precio = Precio.getText();
+        existencia = Existencia.getText();
+        num_Inventario = Numero_Inventario.getText();
+
+        /*
       Declaracion del arreglo el cual contiene 7 ingresos de información
-      */
-     String [] info= new String[7];
-     /*
+         */
+        String[] info = new String[7];
+        /*
      informacion que contiene el arreglo y que son mostrados en la tabla 
-     */
-        info[0]=nom_Prenda;
-        info[1]=tipo_prenda;
-        info[2]=talla;
-        info[3]=cant;
-        info[4]=precio;
-        info[5]=existencia;
-        info[6]=num_Inventario;
+         */
+        info[0] = nom_Prenda;
+        info[1] = tipo_prenda;
+        info[2] = talla;
+        info[3] = cant;
+        info[4] = precio;
+        info[5] = existencia;
+        info[6] = num_Inventario;
+
+        String cadena = nom_Prenda + "," + tipo_prenda + "," + talla + "," + cant + "," + precio + "," + existencia + "," + num_Inventario;
         /*
         Forma de obtenet un Objeto del tipo DefaultTableModel , el cual si nos permite agregar filas, 
         tomando a traves del Metodo getModel() de la tabla jTable1
-        */
+         */
+        escribirCSV(cadena);
         modelo.addRow(info);
-        /*
-        Su función es asignar el ítem u opción que se ha de mostrar o seleccionar por defecto en el Combo Box
-        */
-        Box1.setSelectedIndex(0);
-        Box2.setSelectedIndex(0);
-        Box3.setSelectedIndex(0);
-        /*
-        se utiliza para lo que tu le pongas de argumento aparecerá en el componente de texto
-        */
-        Cantidad.setText("");
-        Precio.setText("");
-        Existencia.setText("");
-        Numero_Inventario.setText("");
+        setValuesInit();
 
-        try{
-          //Crear objeto FileWriter que sera el que nos ayude a escribir sobre el archivo
-          FileWriter archivo2=new FileWriter("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.csv",true);
-          //FileWriter archivo2=new FileWriter("‪C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_CSV_Salida2.txt",true);
-        /*
-         ciclos for que nos permiten ejecutar una o varias líneas de código de forma iterativa 
-          */
-        archivo2.write("Nombre de la prenda, Tipo de prenda, Talla, Cantidad, Precio, Existencia, Numero de inventario"+"\n" );
-         for (int i=0;i<this.jTable1.getRowCount();i++){
-              //Escribimos en el archivo con el metodo write 
-              archivo2.write(modelo.getValueAt(i, 0).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 1).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 2).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 3).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 4).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 5).toString()+"," );
-              archivo2.write(modelo.getValueAt(i, 6).toString()+"\n" );
-          }
-          /*
-          Cerramos la conexion
-          */
-          archivo2.close();
-          /*
-          imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println("El archivo se aguardo exitosamente");
-          /*
-          //Si existe un problema al escribir cae aqui
-          */
-      }catch (IOException x){
-          /*
-          imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println(x); 
-                  System.out.println("Mensaje dentro del catch");
-          /*
-          Linea de codigo que nos ayuda a finalizar el proceso de ejecucion
-          */
-        }
     }//GEN-LAST:event_GuardaEnCSVActionPerformed
 
-    private void GuardarEnXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarEnXMLActionPerformed
-        // TODO add your handling code here:
-        nom_Prenda= Box1.getSelectedItem().toString();
-      tipo_prenda= Box2.getSelectedItem().toString();
-      talla= Box3.getSelectedItem().toString();
-      cant= Cantidad.getText();
-      precio= Precio.getText();
-      existencia=Existencia.getText();
-      num_Inventario=Numero_Inventario.getText();
-   
-      /*
-      Declaracion del arreglo el cual contiene 7 ingresos de información
-      */
-     String [] info= new String[7];
-     /*
-     informacion que contiene el arreglo y que son mostrados en la tabla 
-     */
-        info[0]=nom_Prenda;
-        info[1]=tipo_prenda;
-        info[2]=talla;
-        info[3]=cant;
-        info[4]=precio;
-        info[5]=existencia;
-        info[6]=num_Inventario;
-        /*
-        Forma de obtenet un Objeto del tipo DefaultTableModel , el cual si nos permite agregar filas, 
-        tomando a traves del Metodo getModel() de la tabla jTable1
-        */
-        modelo.addRow(info);
-        /*
-        Su función es asignar el ítem u opción que se ha de mostrar o seleccionar por defecto en el Combo Box
-        */
-        Box1.setSelectedIndex(0);
-        Box2.setSelectedIndex(0);
-        Box3.setSelectedIndex(0);
-        /*
-        se utiliza para lo que tu le pongas de argumento aparecerá en el componente de texto
-        */
-        Cantidad.setText("");
-        Precio.setText("");
-        Existencia.setText("");
-        Numero_Inventario.setText("");
-        try{
-          //Crear objeto FileWriter que sera el que nos ayude a escribir sobre el archivo
-          FileWriter archivo3=new FileWriter("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.xml",true);
-        /*
-         ciclos for que nos permiten ejecutar una o varias líneas de código de forma iterativa 
-          */
-        archivo3.write("Nombre de la prenda, Tipo de prenda, Talla, Cantidad, Precio, Existencia, Numero de inventario"+"\n" );
-          for (int i=0;i<this.jTable1.getRowCount();i++){
-              //Escribimos en el archivo con el metodo write 
-              archivo3.write(modelo.getValueAt(i, 0).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 1).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 2).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 3).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 4).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 5).toString()+"< >" );
-              archivo3.write(modelo.getValueAt(i, 6).toString()+"< >\n" );
-          }
-          /*
-          Cerramos la conexion
-          */
-          archivo3.close();
-          /*
-          imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println("El archivo se aguardo exitosamente");
-          /*
-          //Si existe un problema al escribir cae aqui
-          */
-      }catch (IOException x){
-          /*
-          imprime el texto especificado dentro de los paréntesis lo que sera mostrado en pantalla
-          */
-          System.out.println(x); 
-                  System.out.println("Mensaje dentro del catch");
-          /*
-          Linea de codigo que nos ayuda a finalizar el proceso de ejecucion
-          */
+    private void MostrarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarCSVActionPerformed
+        modelo.setRowCount(0);
+
+        File archivo2;// para manipular al archivo
+        archivo2 = new File("C:\\Users\\PATY\\Downloads\\archivos_txt\\Archivo_Salida.csv");//preparando el archivo
+        if (archivo2.exists() && archivo2.length() >= 1) {
+            try {
+                int line = 0;
+                Scanner scanner = new Scanner(archivo2);
+                while (scanner.hasNextLine()) {
+
+                    String linea = scanner.nextLine();
+                    Scanner delimitar = new Scanner(linea);
+                    delimitar.useDelimiter("\\s*,\\s*");
+                    String info[] = new String[7];
+
+                    if (line > 0) {
+                        info[0] = delimitar.next();//Tome la cadena que detecte hasta que encuetre la coma una
+                        info[1] = delimitar.next();// vez que encuentre esa lee la siguiente y aguarda en el arreglo
+                        info[2] = delimitar.next();
+                        info[3] = delimitar.next();
+                        info[4] = delimitar.next();
+                        info[5] = delimitar.next();
+                        info[6] = delimitar.next();
+                        modelo.addRow(info);
+
+                    }
+                    line++;
+                }
+                scanner.close();
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "El archivo no encontrado");
+            }
         }
-    }//GEN-LAST:event_GuardarEnXMLActionPerformed
+    }//GEN-LAST:event_MostrarCSVActionPerformed
+
+    private void MostrarTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarTXTActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_MostrarTXTActionPerformed
 
     public static void main(String args[]) {
     }
@@ -599,7 +563,8 @@ DefaultTableModel modelo;
     private javax.swing.JTextField Existencia;
     private javax.swing.JButton GuardaEnCSV;
     private javax.swing.JButton GuardarEnTXT;
-    private javax.swing.JButton GuardarEnXML;
+    private javax.swing.JButton MostrarCSV;
+    private javax.swing.JButton MostrarTXT;
     private javax.swing.JLabel N_Prenda;
     private javax.swing.JTextField Numero_Inventario;
     private javax.swing.JLabel Pre;
@@ -610,6 +575,7 @@ DefaultTableModel modelo;
     private javax.swing.JLabel Talla;
     private javax.swing.JLabel Ti_Prenda;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

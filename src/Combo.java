@@ -2,7 +2,7 @@
 
 /**
  *
- * @author PATY
+ * @author PATYs
  */
 public class Combo {
 
